@@ -1,15 +1,29 @@
 import type { Router } from 'vue-router'
 import { login } from '@/utils/request'
+import { useAuthStoreWithout } from '@/store/modules'
 
 export function setupPageGuard(router: Router) {
   router.beforeEach(async (to, from, next) => {
-    // next()
-    login().then((data) => {
-      console.log(`the data is ${data.code}`)
-      next()
-    }).catch((error) => {
+    try {
+      const authStore = useAuthStoreWithout()
+      if (authStore.token === undefined) {
+        const data = await login()
+        if (data.code === '0000') {
+          authStore.setToken(data.data.userId)
+          next()
+        }
+      }
+      else {
+        next()
+      }
+    }
+    catch (error) {
       console.log(error)
-    })
+      if (to.path !== '/500')
+        next({ name: '500' })
+      else
+        next()
+    }
   })
 }
 
