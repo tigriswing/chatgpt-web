@@ -87,10 +87,10 @@ export function post<T = any>(
 }
 
 export function login(): Promise<any> {
-  const SECRET_KEY = 'dc67b5f0-089d-363d-ada0-5a45d1714c43'
+  const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
 
   const loginReqData: LoginReqData = {
-    deviceId: 'dc67b5f0-089d-363d-ada0-5a45d1714c43',
+    deviceId: SECRET_KEY,
     userName: 'A930PAX',
   }
 
@@ -98,7 +98,7 @@ export function login(): Promise<any> {
     '1',
     '58',
     loginReqData,
-    'dc67b5f0-089d-363d-ada0-5a45d1714c43',
+    SECRET_KEY,
     '1719133012191',
     '',
   )
@@ -114,7 +114,7 @@ export function login(): Promise<any> {
 
   const config = {
     headers: {
-      'sn': 'dc67b5f0-089d-363d-ada0-5a45d1714c43', // 设置授权头部
+      'sn': SECRET_KEY, // 设置授权头部
       'Content-Type': 'application/json', // 设置内容类型头部
     },
   }
@@ -139,6 +139,64 @@ export function login(): Promise<any> {
 
   // 发送POST请求
   return axios.post('http://localhost:8088/account/login', signedPostData, config)
+    .then(successHandler, failHandler)
+}
+
+export function chat(): Promise<any> {
+  const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
+
+  const chatAssData: Chat.ChatItemInfo = {
+    role: 'system',
+    content: '我希望你扮演钢铁侠中的Tony Stark。你必须了解Tony Stark的一切. 我希望你像Tony Stark一样回应和回答。不要写任何解释。只像Tony Stark那样回答。',
+  }
+
+  const chatData: Chat.ChatItemData = {
+    systemArray: [chatAssData],
+    userQuery: ' ',
+    assArray: [],
+  }
+
+  const postData = new RequestBean<Chat.ChatItemData>(
+    '1',
+    '58',
+    chatData,
+    SECRET_KEY,
+    '1719474174721',
+    '2311087K0KMRFYY8',
+  )
+
+  // 获取签名
+  const sign = getSignature(postData, SECRET_KEY)
+
+  // 将签名添加到请求参数中
+  const signedPostData: RequestBean<any> & { sign: string } = {
+    ...postData,
+    sign,
+  }
+
+  const config = {
+    headers: {
+      'sn': SECRET_KEY, // 设置授权头部
+      'Content-Type': 'application/json', // 设置内容类型头部
+    },
+  }
+
+  const successHandler = (res: AxiosResponse<Response>) => {
+    const authStore = useAuthStore()
+
+    if (res.data.code === '0000' || typeof res.data === 'string')
+      console.log(`the answer is ${res.data.data.answners[0].message.content}`)
+    return res.data
+
+    return Promise.reject(res.data)
+  }
+
+  const failHandler = (error: Response<Error>) => {
+    throw new Error(error?.message || 'Error')
+  }
+
+  // 发送POST请求
+  return axios.post('http://localhost:8088/openai/v9/flowchat', signedPostData, config)
     .then(successHandler, failHandler)
 }
 

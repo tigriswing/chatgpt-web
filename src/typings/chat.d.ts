@@ -43,4 +43,15 @@ declare namespace Chat {
 		role: string
 		text: string
 	}
+
+	interface ChatItemInfo {
+		role : string
+		content : string
+	}
+
+	interface ChatItemData {
+		assArray? : ChatItemInfo[] | null
+		systemArray : ChatItemInfo[] 
+		userQuery? : string | null
+	}
 }

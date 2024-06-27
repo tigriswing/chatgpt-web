@@ -15,6 +15,7 @@ import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
+import { chat } from '@/utils/request'
 
 let controller = new AbortController()
 
@@ -53,8 +54,8 @@ dataSources.value.forEach((item, index) => {
 })
 
 function handleSubmit() {
-  // login()
-  onConversation()
+  chat()
+  // onConversation()
 }
 
 async function onConversation() {
