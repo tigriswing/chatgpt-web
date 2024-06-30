@@ -128,11 +128,13 @@ async function doConversation() {
 
       if (data.data.isEnd !== 1)
         fetchChatFLow(reqId)
+
+      scrollToBottomIfAtBottom()
     }
   }
 
   const fetchChatAPIOnce = async () => {
-    const data = await chat()
+    const data = await chat(message)
     if (data.code === '0000') {
       lastText = data.data.answners[0].message.content
       updateChat(
@@ -150,6 +152,8 @@ async function doConversation() {
       )
       if (data.data.isEnd !== 1)
         fetchChatFLow(data.data.reqId)
+
+      scrollToBottomIfAtBottom()
     }
   }
 
@@ -157,7 +161,7 @@ async function doConversation() {
 }
 
 async function onConversation() {
-  const message = prompt.value
+  let message = prompt.value
 
   if (loading.value)
     return
@@ -203,30 +207,9 @@ async function onConversation() {
   )
   scrollToBottom()
 
-  // try {
-  const lastText = ''
-  const fetchChatAPIOnce = async () => {
-    const data = await chat()
-    if (data.code === '0000') {
-      const chatResponse = data.data.answners[0].message.content
-      updateChat(
-        +uuid,
-        dataSources.value.length - 1,
-        {
-          dateTime: new Date().toLocaleString(),
-          text: lastText + (data.text ?? ''),
-          inversion: false,
-          error: false,
-          loading: true,
-          conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
-          requestOptions: { prompt: message, options: { ...options } },
-        },
-      )
-    }
-  }
-
-  fetchChatAPIOnce()
-  /*
+  try {
+    let lastText = ''
+    const fetchChatAPIOnce = async () => {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         prompt: message,
         options,
@@ -322,8 +305,6 @@ async function onConversation() {
   finally {
     loading.value = false
   }
-
-  */
 }
 
 async function onRegenerate(index: number) {

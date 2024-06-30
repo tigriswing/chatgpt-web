@@ -142,12 +142,12 @@ export function login(): Promise<any> {
     .then(successHandler, failHandler)
 }
 
-export function chat(): Promise<any> {
+export function chat(prompt: string): Promise<any> {
   const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
 
   const chatAssData: Chat.ChatItemInfo = {
     role: 'system',
-    content: '以表格的形式列出中国各个省份GDP和人口',
+    content: prompt,
   }
 
   const chatData: Chat.ChatItemData = {
