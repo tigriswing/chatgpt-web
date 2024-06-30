@@ -54,4 +54,9 @@ declare namespace Chat {
 		systemArray : ChatItemInfo[] 
 		userQuery? : string | null
 	}
+
+	interface ChatFlowRequest {
+		reqId : string
+		currentLen : string
+	}
 }

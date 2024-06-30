@@ -15,7 +15,7 @@ import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
-import { chat } from '@/utils/request'
+import { chat, chatFlow } from '@/utils/request'
 
 let controller = new AbortController()
 
@@ -53,13 +53,12 @@ dataSources.value.forEach((item, index) => {
     updateChatSome(+uuid, index, { loading: false })
 })
 
-function handleSubmit() {
-  chat()
-  // onConversation()
+async function handleSubmit() {
+  doConversation()
 }
 
-async function onConversation() {
-  let message = prompt.value
+async function doConversation() {
+  const message = prompt.value
 
   if (loading.value)
     return
@@ -105,9 +104,129 @@ async function onConversation() {
   )
   scrollToBottom()
 
-  try {
-    let lastText = ''
-    const fetchChatAPIOnce = async () => {
+  // try {
+  let lastText = ''
+
+  const fetchChatFLow = async (reqId: string) => {
+    const data = await chatFlow(reqId, `${lastText.length}`)
+
+    if (data.code === '0000') {
+      lastText = lastText + data.data.answners[0].message.content
+      updateChat(
+        +uuid,
+        dataSources.value.length - 1,
+        {
+          dateTime: new Date().toLocaleString(),
+          text: lastText,
+          inversion: false,
+          error: false,
+          loading: true,
+          conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
+          requestOptions: { prompt: message, options: { ...options } },
+        },
+      )
+
+      if (data.data.isEnd !== 1)
+        fetchChatFLow(reqId)
+    }
+  }
+
+  const fetchChatAPIOnce = async () => {
+    const data = await chat()
+    if (data.code === '0000') {
+      lastText = data.data.answners[0].message.content
+      updateChat(
+        +uuid,
+        dataSources.value.length - 1,
+        {
+          dateTime: new Date().toLocaleString(),
+          text: lastText,
+          inversion: false,
+          error: false,
+          loading: true,
+          conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
+          requestOptions: { prompt: message, options: { ...options } },
+        },
+      )
+      if (data.data.isEnd !== 1)
+        fetchChatFLow(data.data.reqId)
+    }
+  }
+
+  fetchChatAPIOnce()
+}
+
+async function onConversation() {
+  const message = prompt.value
+
+  if (loading.value)
+    return
+
+  if (!message || message.trim() === '')
+    return
+
+  controller = new AbortController()
+
+  addChat(
+    +uuid,
+    {
+      dateTime: new Date().toLocaleString(),
+      text: message,
+      inversion: true,
+      error: false,
+      conversationOptions: null,
+      requestOptions: { prompt: message, options: null },
+    },
+  )
+  scrollToBottom()
+
+  loading.value = true
+  prompt.value = ''
+
+  let options: Chat.ConversationRequest = {}
+  const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
+
+  if (lastContext && usingContext.value)
+    options = { ...lastContext }
+
+  addChat(
+    +uuid,
+    {
+      dateTime: new Date().toLocaleString(),
+      text: t('chat.thinking'),
+      loading: true,
+      inversion: false,
+      error: false,
+      conversationOptions: null,
+      requestOptions: { prompt: message, options: { ...options } },
+    },
+  )
+  scrollToBottom()
+
+  // try {
+  const lastText = ''
+  const fetchChatAPIOnce = async () => {
+    const data = await chat()
+    if (data.code === '0000') {
+      const chatResponse = data.data.answners[0].message.content
+      updateChat(
+        +uuid,
+        dataSources.value.length - 1,
+        {
+          dateTime: new Date().toLocaleString(),
+          text: lastText + (data.text ?? ''),
+          inversion: false,
+          error: false,
+          loading: true,
+          conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
+          requestOptions: { prompt: message, options: { ...options } },
+        },
+      )
+    }
+  }
+
+  fetchChatAPIOnce()
+  /*
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         prompt: message,
         options,
@@ -203,6 +322,8 @@ async function onConversation() {
   finally {
     loading.value = false
   }
+
+  */
 }
 
 async function onRegenerate(index: number) {
