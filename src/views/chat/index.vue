@@ -126,8 +126,13 @@ async function doConversation() {
         },
       )
 
-      if (data.data.isEnd !== 1)
+      if (data.data.isEnd !== 1) {
         fetchChatFLow(reqId)
+      }
+      else {
+        loading.value = false
+        updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
+      }
 
       scrollToBottomIfAtBottom()
     }
@@ -152,6 +157,8 @@ async function doConversation() {
       )
       if (data.data.isEnd !== 1)
         fetchChatFLow(data.data.reqId)
+      else
+        updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
 
       scrollToBottomIfAtBottom()
     }
