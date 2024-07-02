@@ -138,7 +138,7 @@ export function login(): Promise<any> {
   }
 
   // 发送POST请求
-  return axios.post('http://localhost:8088/account/login', signedPostData, config)
+  return axios.post('http://192.168.43.160:8088/account/login', signedPostData, config)
     .then(successHandler, failHandler)
 }
 
@@ -195,7 +195,7 @@ export function chat(prompt: string): Promise<any> {
   }
 
   // 发送POST请求
-  return axios.post('http://localhost:8088/openai/v9/flowchat', signedPostData, config)
+  return axios.post('http://192.168.43.160:8088/openai/v9/flowchat', signedPostData, config)
     .then(successHandler, failHandler)
 }
 
@@ -246,7 +246,7 @@ export function chatFlow(reqId: string, currentLen: string): Promise<any> {
   }
 
   // 发送POST请求
-  return axios.post('http://localhost:8088/openai/flow', signedPostData, config)
+  return axios.post('http://192.168.43.160:8088/openai/flow', signedPostData, config)
     .then(successHandler, failHandler)
 }
 

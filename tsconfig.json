@@ -10,7 +10,7 @@
     "jsx": "preserve",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false, // 设置为true， 定义的方法如果没调用会出现打包错误
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
