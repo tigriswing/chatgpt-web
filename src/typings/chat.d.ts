@@ -44,14 +44,14 @@ declare namespace Chat {
 		text: string
 	}
 
-	interface ChatItemInfo {
+	interface ChatMessage {
 		role : string
 		content : string
 	}
 
-	interface ChatItemData {
-		assArray? : ChatItemInfo[] | null
-		systemArray : ChatItemInfo[] 
+	interface ChatAskBean {
+		systemArray : ChatMessage[] 
+		assArray? : ChatMessage[] | null
 		userQuery? : string | null
 	}
 

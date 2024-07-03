@@ -8,6 +8,7 @@ import { toPng } from 'html-to-image'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
+import { chatContextUtils } from './utils/chatContext'
 import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
 import { HoverButton, SvgIcon } from '@/components/common'
@@ -31,6 +32,7 @@ const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
 const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll()
 const { usingContext, toggleUsingContext } = useUsingContext()
+const { askQuestionWithContext } = chatContextUtils()
 
 const { uuid } = route.params as { uuid: string }
 
@@ -86,6 +88,7 @@ async function doConversation() {
 
   let options: Chat.ConversationRequest = {}
   const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
+  const chatHistoryList = askQuestionWithContext(dataSources.value)
 
   if (lastContext && usingContext.value)
     options = { ...lastContext }
@@ -139,7 +142,7 @@ async function doConversation() {
   }
 
   const fetchChatAPIOnce = async () => {
-    const data = await chat(message)
+    const data = await chat(chatHistoryList)
     if (data.code === '0000') {
       lastText = data.data.answners[0].message.content
       updateChat(

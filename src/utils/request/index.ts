@@ -6,6 +6,12 @@ import request from './axios'
 import { getSignature } from './utils'
 import { useAuthStore } from '@/store'
 
+// const testIp = 'http://enjoyailife.com/game-api/'
+const testIp = 'http://192.168.43.160:8088/'
+
+const UserId = '2311087K0KMRFYY8' // test
+// const UserId = '2310091P8BN55DS8'
+
 export interface HttpOption {
   url: string
   data?: any
@@ -138,31 +144,31 @@ export function login(): Promise<any> {
   }
 
   // 发送POST请求
-  return axios.post('http://192.168.43.160:8088/account/login', signedPostData, config)
+  return axios.post(`${testIp}account/login`, signedPostData, config)
     .then(successHandler, failHandler)
 }
 
-export function chat(prompt: string): Promise<any> {
+export function chat(chatData: Chat.ChatAskBean): Promise<any> {
   const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
 
-  const chatAssData: Chat.ChatItemInfo = {
+  const chatAssData1: Chat.ChatMessage = {
     role: 'system',
-    content: prompt,
+    content: '123',
   }
 
-  const chatData: Chat.ChatItemData = {
-    systemArray: [chatAssData],
+  const chatData2: Chat.ChatAskBean = {
+    systemArray: [chatAssData1],
     userQuery: ' ',
     assArray: [],
   }
 
-  const postData = new RequestBean<Chat.ChatItemData>(
+  const postData = new RequestBean<Chat.ChatAskBean>(
     '1',
     '58',
     chatData,
     SECRET_KEY,
     '1719474174721',
-    '2311087K0KMRFYY8',
+    UserId,
   )
 
   // 获取签名
@@ -195,7 +201,7 @@ export function chat(prompt: string): Promise<any> {
   }
 
   // 发送POST请求
-  return axios.post('http://192.168.43.160:8088/openai/v9/flowchat', signedPostData, config)
+  return axios.post(`${testIp}openai/v9/flowchat`, signedPostData, config)
     .then(successHandler, failHandler)
 }
 
@@ -213,7 +219,7 @@ export function chatFlow(reqId: string, currentLen: string): Promise<any> {
     chatData,
     SECRET_KEY,
     '1719474174721',
-    '2311087K0KMRFYY8',
+    UserId,
   )
 
   // 获取签名
@@ -246,7 +252,7 @@ export function chatFlow(reqId: string, currentLen: string): Promise<any> {
   }
 
   // 发送POST请求
-  return axios.post('http://192.168.43.160:8088/openai/flow', signedPostData, config)
+  return axios.post(`${testIp}openai/flow`, signedPostData, config)
     .then(successHandler, failHandler)
 }
 
