@@ -148,19 +148,8 @@ export function login(): Promise<any> {
     .then(successHandler, failHandler)
 }
 
-export function chat(chatData: Chat.ChatAskBean): Promise<any> {
+export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal): Promise<any> {
   const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
-
-  const chatAssData1: Chat.ChatMessage = {
-    role: 'system',
-    content: '123',
-  }
-
-  const chatData2: Chat.ChatAskBean = {
-    systemArray: [chatAssData1],
-    userQuery: ' ',
-    assArray: [],
-  }
 
   const postData = new RequestBean<Chat.ChatAskBean>(
     '1',
@@ -185,10 +174,11 @@ export function chat(chatData: Chat.ChatAskBean): Promise<any> {
       'sn': SECRET_KEY, // 设置授权头部
       'Content-Type': 'application/json', // 设置内容类型头部
     },
+    signal,
   }
 
   const successHandler = (res: AxiosResponse<Response>) => {
-    const authStore = useAuthStore()
+    // const authStore = useAuthStore()
 
     if (res.data.code === '0000' || typeof res.data === 'string')
       return res.data
@@ -205,7 +195,7 @@ export function chat(chatData: Chat.ChatAskBean): Promise<any> {
     .then(successHandler, failHandler)
 }
 
-export function chatFlow(reqId: string, currentLen: string): Promise<any> {
+export function chatFlow(reqId: string, currentLen: string, signal?: GenericAbortSignal): Promise<any> {
   const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
 
   const chatData: Chat.ChatFlowRequest = {
@@ -236,6 +226,7 @@ export function chatFlow(reqId: string, currentLen: string): Promise<any> {
       'sn': SECRET_KEY, // 设置授权头部
       'Content-Type': 'application/json', // 设置内容类型头部
     },
+    signal,
   }
 
   const successHandler = (res: AxiosResponse<Response>) => {

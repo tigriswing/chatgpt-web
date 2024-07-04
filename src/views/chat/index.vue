@@ -111,7 +111,7 @@ async function doConversation() {
   let lastText = ''
 
   const fetchChatFLow = async (reqId: string) => {
-    const data = await chatFlow(reqId, `${lastText.length}`)
+    const data = await chatFlow(reqId, `${lastText.length}`, controller.signal)
 
     if (data.code === '0000') {
       lastText = lastText + data.data.answners[0].message.content
@@ -142,7 +142,7 @@ async function doConversation() {
   }
 
   const fetchChatAPIOnce = async () => {
-    const data = await chat(chatHistoryList)
+    const data = await chat(chatHistoryList, controller.signal)
     if (data.code === '0000') {
       lastText = data.data.answners[0].message.content
       updateChat(
