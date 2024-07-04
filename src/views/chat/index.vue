@@ -317,6 +317,111 @@ async function onConversation() {
   }
 }
 
+async function onRegenerateV2(index: number) {
+  if (loading.value)
+    return
+
+  controller = new AbortController()
+
+  const { requestOptions } = dataSources.value[index]
+
+  const message = requestOptions?.prompt ?? ''
+
+  let options: Chat.ConversationRequest = {}
+
+  if (requestOptions.options)
+    options = { ...requestOptions.options }
+
+  loading.value = true
+
+  updateChat(
+    +uuid,
+    index,
+    {
+      dateTime: new Date().toLocaleString(),
+      text: '',
+      inversion: false,
+      error: false,
+      loading: true,
+      conversationOptions: null,
+      requestOptions: { prompt: message, options: { ...options } },
+    },
+  )
+
+  scrollToBottom()
+
+  loading.value = true
+  prompt.value = ''
+
+  const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
+  const chatHistoryList = askQuestionWithContext(dataSources.value)
+
+  if (lastContext && usingContext.value)
+    options = { ...lastContext }
+
+  // try {
+  let lastText = ''
+
+  const fetchChatFLow = async (reqId: string) => {
+    const data = await chatFlow(reqId, `${lastText.length}`, controller.signal)
+
+    if (data.code === '0000') {
+      lastText = lastText + data.data.answners[0].message.content
+      updateChat(
+        +uuid,
+        dataSources.value.length - 1,
+        {
+          dateTime: new Date().toLocaleString(),
+          text: lastText,
+          inversion: false,
+          error: false,
+          loading: true,
+          conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
+          requestOptions: { prompt: message, options: { ...options } },
+        },
+      )
+
+      if (data.data.isEnd !== 1) {
+        fetchChatFLow(reqId)
+      }
+      else {
+        loading.value = false
+        updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
+      }
+
+      scrollToBottomIfAtBottom()
+    }
+  }
+
+  const fetchChatAPIOnce = async () => {
+    const data = await chat(chatHistoryList, controller.signal)
+    if (data.code === '0000') {
+      lastText = data.data.answners[0].message.content
+      updateChat(
+        +uuid,
+        dataSources.value.length - 1,
+        {
+          dateTime: new Date().toLocaleString(),
+          text: lastText,
+          inversion: false,
+          error: false,
+          loading: true,
+          conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
+          requestOptions: { prompt: message, options: { ...options } },
+        },
+      )
+      if (data.data.isEnd !== 1)
+        fetchChatFLow(data.data.reqId)
+      else
+        updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
+
+      scrollToBottomIfAtBottom()
+    }
+  }
+
+  fetchChatAPIOnce()
+}
+
 async function onRegenerate(index: number) {
   if (loading.value)
     return
@@ -604,7 +709,8 @@ onUnmounted(() => {
                   :inversion="item.inversion"
                   :error="item.error"
                   :loading="item.loading"
-                  @regenerate="onRegenerate(index)"
+                  :is-last-index="index === dataSources.length - 1"
+                  @regenerate="onRegenerateV2(index)"
                   @delete="handleDelete(index)"
                 />
                 <div class="sticky bottom-0 left-0 flex justify-center">

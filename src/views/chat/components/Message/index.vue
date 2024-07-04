@@ -15,6 +15,7 @@ interface Props {
   inversion?: boolean
   error?: boolean
   loading?: boolean
+  isLastIndex?: boolean
 }
 
 interface Emit {
@@ -37,6 +38,15 @@ const textRef = ref<HTMLElement>()
 const asRawText = ref(props.inversion)
 
 const messageRef = ref<HTMLElement>()
+
+const canRefresh = computed(() => {
+  let isRefreshable = false
+
+  if (!props.inversion && props.isLastIndex)
+    isRefreshable = true
+
+  return isRefreshable
+})
 
 const options = computed(() => {
   const common = [
@@ -122,7 +132,7 @@ async function handleCopy() {
         />
         <div class="flex flex-col">
           <button
-            v-if="!inversion"
+            v-if="canRefresh"
             class="mb-2 transition text-neutral-300 hover:text-neutral-800 dark:hover:text-neutral-300"
             @click="handleRegenerate"
           >
