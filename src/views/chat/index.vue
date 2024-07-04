@@ -88,7 +88,7 @@ async function doConversation() {
 
   let options: Chat.ConversationRequest = {}
   const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
-  const chatHistoryList = askQuestionWithContext(dataSources.value)
+  const chatHistoryList = askQuestionWithContext(dataSources.value, usingContext.value)
 
   if (lastContext && usingContext.value)
     options = { ...lastContext }
@@ -107,7 +107,6 @@ async function doConversation() {
   )
   scrollToBottom()
 
-  // try {
   let lastText = ''
 
   const fetchChatFLow = async (reqId: string) => {
@@ -170,6 +169,9 @@ async function doConversation() {
   fetchChatAPIOnce()
 }
 
+/**
+ * @deprecated
+ */
 async function onConversation() {
   let message = prompt.value
 
@@ -354,12 +356,11 @@ async function onRegenerateV2(index: number) {
   prompt.value = ''
 
   const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
-  const chatHistoryList = askQuestionWithContext(dataSources.value)
+  const chatHistoryList = askQuestionWithContext(dataSources.value.slice(0, -1), usingContext.value)
 
   if (lastContext && usingContext.value)
     options = { ...lastContext }
 
-  // try {
   let lastText = ''
 
   const fetchChatFLow = async (reqId: string) => {

@@ -39,7 +39,7 @@ export function chatContextUtils() {
   }
 
   function askQuestionWithContext(
-    dataList: Chat.Chat[], maxHistoryTokens = 1500): Chat.ChatAskBean {
+    dataList: Chat.Chat[], isUseContext = true, maxHistoryTokens = 1500): Chat.ChatAskBean {
     const limitStartIndex: number = dataList.length - 1
     const systemArray: Chat.ChatMessage[] = []
     const assArray: Chat.ChatMessage[] = []
@@ -47,6 +47,18 @@ export function chatContextUtils() {
 
     let conversationTokens = 0
     let index = 0
+
+    // 不使用上下文的情况，直接取最后一个放到system里？
+    if (!isUseContext) {
+      const chatMsg: Chat.ChatMessage = { role: '', content: '' }
+      chatMsg.role = 'system'
+      chatMsg.content = dataList[limitStartIndex].text
+      systemArray.push(chatMsg)
+
+      userQuery = ' '
+
+      return { systemArray, assArray, userQuery }
+    }
 
     while (index < dataList.length) {
       const value = dataList[index]
