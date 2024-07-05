@@ -1,5 +1,4 @@
 import type { AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axios'
-import axios from 'axios'
 import type { LoginReqData } from '../request/model/LoginReqData'
 import { RequestBean } from '../request/model/RequestBean'
 import request from './axios'
@@ -92,6 +91,66 @@ export function post<T = any>(
   })
 }
 
+function httpV2<T = any>(
+  { url, data, method, headers, signal, beforeRequest, afterRequest }: HttpOption,
+) {
+  const successHandler = (res: AxiosResponse<Response<T>>) => {
+    const authStore = useAuthStore()
+
+    if (res.data.code === '0000' || typeof res.data === 'string')
+      return res.data
+
+    if (res.data.status === 'Unauthorized') {
+      authStore.removeToken()
+      window.location.reload()
+    }
+
+    return Promise.reject(res.data)
+  }
+
+  const failHandler = (error: Response<Error>) => {
+    afterRequest?.()
+    throw new Error(error?.message || 'Error')
+  }
+
+  beforeRequest?.()
+
+  method = method || 'GET'
+
+  const params = Object.assign(typeof data === 'function' ? data() : data ?? {}, {})
+
+  return method === 'GET'
+    ? request.get(url, { params, signal }).then(successHandler, failHandler)
+    : request.post(url, params, { headers, signal }).then(successHandler, failHandler)
+}
+
+export function getV2<T = any>(
+  { url, data, method = 'GET', signal, beforeRequest, afterRequest }: HttpOption,
+): Promise<Response<T>> {
+  return httpV2<T>({
+    url,
+    method,
+    data,
+    signal,
+    beforeRequest,
+    afterRequest,
+  })
+}
+
+export function postV2<T = any>(
+  { url, data, method = 'POST', headers, signal, beforeRequest, afterRequest }: HttpOption,
+): Promise<Response<T>> {
+  return httpV2<T>({
+    url,
+    method,
+    data,
+    headers,
+    signal,
+    beforeRequest,
+    afterRequest,
+  })
+}
+
 export function login(): Promise<any> {
   const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
 
@@ -118,34 +177,13 @@ export function login(): Promise<any> {
     sign,
   }
 
-  const config = {
-    headers: {
-      'sn': SECRET_KEY, // 设置授权头部
-      'Content-Type': 'application/json', // 设置内容类型头部
-    },
-  }
-
-  const successHandler = (res: AxiosResponse<Response>) => {
-    const authStore = useAuthStore()
-
-    if (res.data.code === '0000' || typeof res.data === 'string')
-      return res.data
-
-    if (res.data.status === 'Unauthorized') {
-      authStore.removeToken()
-      window.location.reload()
-    }
-
-    return Promise.reject(res.data)
-  }
-
-  const failHandler = (error: Response<Error>) => {
-    throw new Error(error?.message || 'Error')
+  const headers = {
+    'sn': SECRET_KEY, // 设置授权头部
+    'Content-Type': 'application/json', // 设置内容类型头部
   }
 
   // 发送POST请求
-  return axios.post(`${testIp}account/login`, signedPostData, config)
-    .then(successHandler, failHandler)
+  return postV2({ url: `${testIp}account/login`, data: signedPostData, headers })
 }
 
 export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal): Promise<any> {
@@ -169,30 +207,12 @@ export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal): P
     sign,
   }
 
-  const config = {
-    headers: {
-      'sn': SECRET_KEY, // 设置授权头部
-      'Content-Type': 'application/json', // 设置内容类型头部
-    },
-    signal,
+  const headers = {
+    'sn': SECRET_KEY, // 设置授权头部
+    'Content-Type': 'application/json', // 设置内容类型头部
   }
 
-  const successHandler = (res: AxiosResponse<Response>) => {
-    // const authStore = useAuthStore()
-
-    if (res.data.code === '0000' || typeof res.data === 'string')
-      return res.data
-
-    return Promise.reject(res.data)
-  }
-
-  const failHandler = (error: Response<Error>) => {
-    throw new Error(error?.message || 'Error')
-  }
-
-  // 发送POST请求
-  return axios.post(`${testIp}openai/v9/flowchat`, signedPostData, config)
-    .then(successHandler, failHandler)
+  return postV2({ url: `${testIp}openai/v9/flowchat`, data: signedPostData, headers, signal })
 }
 
 export function chatFlow(reqId: string, currentLen: string, signal?: GenericAbortSignal): Promise<any> {
@@ -221,30 +241,12 @@ export function chatFlow(reqId: string, currentLen: string, signal?: GenericAbor
     sign,
   }
 
-  const config = {
-    headers: {
-      'sn': SECRET_KEY, // 设置授权头部
-      'Content-Type': 'application/json', // 设置内容类型头部
-    },
-    signal,
+  const headers = {
+    'sn': SECRET_KEY, // 设置授权头部
+    'Content-Type': 'application/json', // 设置内容类型头部
   }
 
-  const successHandler = (res: AxiosResponse<Response>) => {
-    const authStore = useAuthStore()
-
-    if (res.data.code === '0000' || typeof res.data === 'string')
-      return res.data
-
-    return Promise.reject(res.data)
-  }
-
-  const failHandler = (error: Response<Error>) => {
-    throw new Error(error?.message || 'Error')
-  }
-
-  // 发送POST请求
-  return axios.post(`${testIp}openai/flow`, signedPostData, config)
-    .then(successHandler, failHandler)
+  return postV2({ url: `${testIp}openai/flow`, data: signedPostData, headers, signal })
 }
 
 export default post
