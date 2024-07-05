@@ -10,6 +10,7 @@ const testIp = 'http://192.168.43.160:8088/'
 
 const UserId = '2311087K0KMRFYY8' // test
 // const UserId = '2310091P8BN55DS8'
+const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
 
 export interface HttpOption {
   url: string
@@ -117,8 +118,17 @@ function httpV2<T = any>(
 
   method = method || 'GET'
 
-  const params = Object.assign(typeof data === 'function' ? data() : data ?? {}, {})
+  // 获取签名
+  const sign = getSignature(data, SECRET_KEY)
 
+  // 将签名添加到请求参数中
+  const params: RequestBean<any> & { sign: string } = {
+    ...data,
+    sign,
+  }
+
+  // const params = Object.assign(typeof data === 'function' ? data() : data ?? {}, {})
+  url = testIp + url
   return method === 'GET'
     ? request.get(url, { params, signal }).then(successHandler, failHandler)
     : request.post(url, params, { headers, signal }).then(successHandler, failHandler)
@@ -152,8 +162,6 @@ export function postV2<T = any>(
 }
 
 export function login(): Promise<any> {
-  const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
-
   const loginReqData: LoginReqData = {
     deviceId: SECRET_KEY,
     userName: 'A930PAX',
@@ -168,27 +176,16 @@ export function login(): Promise<any> {
     '',
   )
 
-  // 获取签名
-  const sign = getSignature(postData, SECRET_KEY)
-
-  // 将签名添加到请求参数中
-  const signedPostData: RequestBean<any> & { sign: string } = {
-    ...postData,
-    sign,
-  }
-
   const headers = {
     'sn': SECRET_KEY, // 设置授权头部
     'Content-Type': 'application/json', // 设置内容类型头部
   }
 
   // 发送POST请求
-  return postV2({ url: `${testIp}account/login`, data: signedPostData, headers })
+  return postV2({ url: 'account/login', data: postData, headers })
 }
 
 export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal): Promise<any> {
-  const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
-
   const postData = new RequestBean<Chat.ChatAskBean>(
     '1',
     '58',
@@ -198,26 +195,15 @@ export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal): P
     UserId,
   )
 
-  // 获取签名
-  const sign = getSignature(postData, SECRET_KEY)
-
-  // 将签名添加到请求参数中
-  const signedPostData: RequestBean<any> & { sign: string } = {
-    ...postData,
-    sign,
-  }
-
   const headers = {
     'sn': SECRET_KEY, // 设置授权头部
     'Content-Type': 'application/json', // 设置内容类型头部
   }
 
-  return postV2({ url: `${testIp}openai/v9/flowchat`, data: signedPostData, headers, signal })
+  return postV2({ url: 'openai/v9/flowchat', data: postData, headers, signal })
 }
 
 export function chatFlow(reqId: string, currentLen: string, signal?: GenericAbortSignal): Promise<any> {
-  const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
-
   const chatData: Chat.ChatFlowRequest = {
     reqId,
     currentLen,
@@ -232,21 +218,12 @@ export function chatFlow(reqId: string, currentLen: string, signal?: GenericAbor
     UserId,
   )
 
-  // 获取签名
-  const sign = getSignature(postData, SECRET_KEY)
-
-  // 将签名添加到请求参数中
-  const signedPostData: RequestBean<any> & { sign: string } = {
-    ...postData,
-    sign,
-  }
-
   const headers = {
     'sn': SECRET_KEY, // 设置授权头部
     'Content-Type': 'application/json', // 设置内容类型头部
   }
 
-  return postV2({ url: `${testIp}openai/flow`, data: signedPostData, headers, signal })
+  return postV2({ url: 'openai/flow', data: postData, headers, signal })
 }
 
 export default post
