@@ -200,7 +200,7 @@ export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal): P
     'Content-Type': 'application/json', // 设置内容类型头部
   }
 
-  return postV2({ url: 'openai/v9/flowchat', data: postData, headers, signal })
+  return postV2({ url: 'openai/v2/flowchat', data: postData, headers, signal })
 }
 
 export function chatFlow(reqId: string, currentLen: string, signal?: GenericAbortSignal): Promise<any> {

@@ -56,10 +56,10 @@ dataSources.value.forEach((item, index) => {
 })
 
 async function handleSubmit() {
-  doConversation()
+  doConversationV2()
 }
 
-async function doConversation() {
+async function doConversationV2() {
   const message = prompt.value
 
   if (loading.value)
@@ -107,66 +107,116 @@ async function doConversation() {
   )
   scrollToBottom()
 
-  let lastText = ''
+  try {
+    let lastText = ''
 
-  const fetchChatFLow = async (reqId: string) => {
-    const data = await chatFlow(reqId, `${lastText.length}`, controller.signal)
+    const fetchChatFLow = async (reqId: string) => {
+      const data = await chatFlow(reqId, `${lastText.length}`, controller.signal)
 
-    if (data.code === '0000') {
-      lastText = lastText + data.data.answners[0].message.content
-      updateChat(
+      if (data.code === '0000') {
+        lastText = lastText + data.data.answners[0].message.content
+        updateChat(
+          +uuid,
+          dataSources.value.length - 1,
+          {
+            dateTime: new Date().toLocaleString(),
+            text: lastText,
+            inversion: false,
+            error: false,
+            loading: true,
+            conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
+            requestOptions: { prompt: message, options: { ...options } },
+          },
+        )
+
+        if (data.data.isEnd !== 1) {
+          await fetchChatFLow(reqId)
+        }
+        else {
+          loading.value = false
+          updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
+        }
+
+        scrollToBottomIfAtBottom()
+      }
+    }
+
+    const fetchChatAPIOnce = async () => {
+      const data = await chat(chatHistoryList, controller.signal)
+      if (data.code === '0000') {
+        lastText = data.data.answners[0].message.content
+        updateChat(
+          +uuid,
+          dataSources.value.length - 1,
+          {
+            dateTime: new Date().toLocaleString(),
+            text: lastText,
+            inversion: false,
+            error: false,
+            loading: true,
+            conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
+            requestOptions: { prompt: message, options: { ...options } },
+          },
+        )
+        if (data.data.isEnd !== 1)
+          await fetchChatFLow(data.data.reqId)
+        else
+          updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
+
+        scrollToBottomIfAtBottom()
+      }
+    }
+
+    await fetchChatAPIOnce()
+  }
+  catch (error: any) {
+    const errorMessage = (error?.msg || error?.message) ?? t('common.wrong')
+
+    if (error.message === 'canceled') {
+      updateChatSome(
         +uuid,
         dataSources.value.length - 1,
         {
-          dateTime: new Date().toLocaleString(),
-          text: lastText,
-          inversion: false,
-          error: false,
-          loading: true,
-          conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
-          requestOptions: { prompt: message, options: { ...options } },
+          loading: false,
         },
       )
-
-      if (data.data.isEnd !== 1) {
-        fetchChatFLow(reqId)
-      }
-      else {
-        loading.value = false
-        updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
-      }
-
       scrollToBottomIfAtBottom()
+      return
     }
-  }
 
-  const fetchChatAPIOnce = async () => {
-    const data = await chat(chatHistoryList, controller.signal)
-    if (data.code === '0000') {
-      lastText = data.data.answners[0].message.content
-      updateChat(
+    const currentChat = getChatByUuidAndIndex(+uuid, dataSources.value.length - 1)
+
+    if (currentChat?.text && currentChat.text !== '') {
+      updateChatSome(
         +uuid,
         dataSources.value.length - 1,
         {
-          dateTime: new Date().toLocaleString(),
-          text: lastText,
-          inversion: false,
+          text: `${currentChat.text}\n[${errorMessage}]`,
           error: false,
-          loading: true,
-          conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
-          requestOptions: { prompt: message, options: { ...options } },
+          loading: false,
         },
       )
-      if (data.data.isEnd !== 1)
-        fetchChatFLow(data.data.reqId)
-      else
-        updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
-
-      scrollToBottomIfAtBottom()
+      return
     }
-  }
 
-  fetchChatAPIOnce()
+    updateChat(
+      +uuid,
+      dataSources.value.length - 1,
+      {
+        dateTime: new Date().toLocaleString(),
+        text: errorMessage,
+        inversion: false,
+        error: true,
+        loading: false,
+        conversationOptions: null,
+        requestOptions: { prompt: message, options: { ...options } },
+      },
+    )
+    scrollToBottomIfAtBottom()
+  }
+  finally {
+    loading.value = false
+  }
 }
 
 /**
