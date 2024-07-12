@@ -111,33 +111,38 @@ async function doConversationV2() {
     let lastText = ''
 
     const fetchChatFLow = async (reqId: string) => {
-      const data = await chatFlow(reqId, `${lastText.length}`, controller.signal)
+      let isEnd = false
 
-      if (data.code === '0000') {
-        lastText = lastText + data.data.answners[0].message.content
-        updateChat(
-          +uuid,
-          dataSources.value.length - 1,
-          {
-            dateTime: new Date().toLocaleString(),
-            text: lastText,
-            inversion: false,
-            error: false,
-            loading: true,
-            conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
-            requestOptions: { prompt: message, options: { ...options } },
-          },
-        )
+      while (!isEnd) {
+        const data = await chatFlow(reqId, `${lastText.length}`, controller.signal)
 
-        if (data.data.isEnd !== 1) {
-          await fetchChatFLow(reqId)
+        if (data.code === '0000') {
+          lastText = lastText + data.data.answners[0].message.content
+          updateChat(
+            +uuid,
+            dataSources.value.length - 1,
+            {
+              dateTime: new Date().toLocaleString(),
+              text: lastText,
+              inversion: false,
+              error: false,
+              loading: true,
+              conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
+              requestOptions: { prompt: message, options: { ...options } },
+            },
+          )
+
+          isEnd = data.data.isEnd === 1
+          if (isEnd) {
+            loading.value = false
+            updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
+          }
+
+          scrollToBottomIfAtBottom()
         }
         else {
-          loading.value = false
-          updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
+          break
         }
-
-        scrollToBottomIfAtBottom()
       }
     }
 
