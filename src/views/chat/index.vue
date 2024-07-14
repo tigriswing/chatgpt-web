@@ -11,7 +11,7 @@ import { useChat } from './hooks/useChat'
 import { chatContextUtils } from './utils/chatContext'
 import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
-import { HoverButton, SvgIcon } from '@/components/common'
+import { DropDown, HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
@@ -750,9 +750,11 @@ onUnmounted(() => {
         >
           <div id="image-wrapper" class="relative">
             <template v-if="!dataSources.length">
-              <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
-                <SvgIcon icon="ri:bubble-chart-fill" class="mr-2 text-3xl" />
-                <span>{{ t('chat.newChatTitle') }}</span>
+              <div class="flex items-center mt-4 text-center text-neutral-300">
+                <DropDown
+                  trigger="hover"
+                  placement="bottom-start"
+                />
               </div>
             </template>
             <template v-else>
