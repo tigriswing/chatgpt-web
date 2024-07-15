@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { UserInfo, UserState } from './helper'
+import type { ChatModel, UserInfo, UserState } from './helper'
 import { defaultSetting, getLocalState, setLocalState } from './helper'
 
 export const useUserStore = defineStore('user-store', {
@@ -17,6 +17,27 @@ export const useUserStore = defineStore('user-store', {
 
     recordState() {
       setLocalState(this.$state)
+    },
+
+    setUserChatModel(chatModel: ChatModel) {
+      this.chatModel = { ...this.chatModel, ...chatModel }
+      this.recordState()
+    },
+
+    getAllChatModel() {
+      return [{
+        label: 'DeepSeek',
+        key: '1',
+        description: 'This is model DeepSeek',
+      }, {
+        label: 'ChatGPT 3.5',
+        key: '2',
+        description: 'This is model ChatGPT 3.5',
+      }, {
+        label: 'ChatGPT 4.0',
+        key: '3',
+        description: 'This is model ChatGPT 4.0',
+      }]
     },
   },
 })

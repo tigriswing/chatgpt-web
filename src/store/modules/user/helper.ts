@@ -8,8 +8,15 @@ export interface UserInfo {
   description: string
 }
 
+export interface ChatModel {
+  label: string
+  key: string
+  description: string
+}
+
 export interface UserState {
   userInfo: UserInfo
+  chatModel: ChatModel
 }
 
 export function defaultSetting(): UserState {
@@ -18,6 +25,12 @@ export function defaultSetting(): UserState {
       avatar: 'https://raw.githubusercontent.com/Chanzhaoyu/chatgpt-web/main/src/assets/avatar.jpg',
       name: 'ChenZhaoYu',
       description: 'Star on <a href="https://github.com/Chanzhaoyu/chatgpt-bot" class="text-blue-500" target="_blank" >GitHub</a>',
+    },
+
+    chatModel: {
+      label: 'DeepSeek',
+      key: '1',
+      description: 'This is model DeepSeek',
     },
   }
 }

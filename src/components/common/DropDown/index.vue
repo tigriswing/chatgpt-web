@@ -1,23 +1,24 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue'
 import { NButton, NDropdown } from 'naive-ui'
+import { useUserStore } from '@/store'
 
-const options = ref([
-  { label: 'DeepSeek', key: '1' },
-  { label: 'GPT3.5', key: '2' },
-  { label: 'GPT4.0', key: '3' },
-])
+const userStore = useUserStore()
+
+const options = ref(userStore.getAllChatModel())
 
 const selectedLabel = ref('Select an option')
 
 onMounted(() => {
-  selectedLabel.value = options.value[0].label
+  selectedLabel.value = userStore.chatModel.label
 })
 
 function handleClick(key: any) {
   const selectedOption = options.value.find(option => option.key === key)
-  if (selectedOption)
+  if (selectedOption) {
+    userStore.setUserChatModel(selectedOption)
     selectedLabel.value = selectedOption.label
+  }
 }
 </script>
 
