@@ -13,10 +13,12 @@ import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
 import { DropDown, HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useChatStore, usePromptStore } from '@/store'
+import { useChatStore, usePromptStore, useUserStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
 import { chat, chatFlow } from '@/utils/request'
+
+const userStore = useUserStore()
 
 let controller = new AbortController()
 
@@ -147,7 +149,7 @@ async function doConversationV2() {
     }
 
     const fetchChatAPIOnce = async () => {
-      const data = await chat(chatHistoryList, controller.signal)
+      const data = await chat(chatHistoryList, controller.signal, userStore.chatModel.key)
       if (data.code === '0000') {
         lastText = data.data.answners[0].message.content
         updateChat(
@@ -450,7 +452,7 @@ async function onRegenerateV2(index: number) {
   }
 
   const fetchChatAPIOnce = async () => {
-    const data = await chat(chatHistoryList, controller.signal)
+    const data = await chat(chatHistoryList, controller.signal, userStore.chatModel.key)
     if (data.code === '0000') {
       lastText = data.data.answners[0].message.content
       updateChat(

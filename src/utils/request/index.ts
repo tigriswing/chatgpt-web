@@ -185,7 +185,13 @@ export function login(): Promise<any> {
   return postV2({ url: 'account/login', data: postData, headers })
 }
 
-export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal): Promise<any> {
+export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal, modelType: string): Promise<any> {
+  let requestUrl = 'openai/v2/flowchat'
+  if (modelType === '3') { // gpt-4 TODO
+    chatData.mType = '14'
+    requestUrl = 'wd/v2/flowchat'
+  }
+
   const postData = new RequestBean<Chat.ChatAskBean>(
     '1',
     '58',
@@ -200,7 +206,7 @@ export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal): P
     'Content-Type': 'application/json', // 设置内容类型头部
   }
 
-  return postV2({ url: 'openai/v2/flowchat', data: postData, headers, signal })
+  return postV2({ url: requestUrl, data: postData, headers, signal })
 }
 
 export function chatFlow(reqId: string, currentLen: string, signal?: GenericAbortSignal): Promise<any> {

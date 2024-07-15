@@ -53,6 +53,7 @@ declare namespace Chat {
 		systemArray : ChatMessage[] 
 		assArray? : ChatMessage[] | null
 		userQuery? : string | null
+		mType?:string|null
 	}
 
 	interface ChatFlowRequest {

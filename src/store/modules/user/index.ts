@@ -37,6 +37,10 @@ export const useUserStore = defineStore('user-store', {
         label: 'ChatGPT 4.0',
         key: '3',
         description: 'This is model ChatGPT 4.0',
+      }, {
+        label: 'ChatGPT 4.0 Web',
+        key: '4',
+        description: '带搜索功能',
       }]
     },
   },
