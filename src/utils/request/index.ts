@@ -185,7 +185,7 @@ export function login(): Promise<any> {
   return postV2({ url: 'account/login', data: postData, headers })
 }
 
-export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal, modelType: string): Promise<any> {
+export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal, modelType?: string): Promise<any> {
   let requestUrl = 'openai/v2/flowchat'
   if (modelType === '3') { // gpt-4 TODO
     chatData.mType = '14'
