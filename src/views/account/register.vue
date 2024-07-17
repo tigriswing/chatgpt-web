@@ -3,13 +3,16 @@ import { reactive, ref } from 'vue'
 import type { FormInst } from 'naive-ui'
 import { NButton, NForm, NFormItem, NInput, NSpace, useMessage } from 'naive-ui'
 import { useRouter } from 'vue-router'
-import SvgIcon from '@/components/common/SvgIcon/index.vue'
+import useSmsCode from '@/utils/functions'
 import { login } from '@/utils/request'
 import { useAuthStoreWithout } from '@/store/modules'
 
 defineProps<Props>()
+
+const { label, isCounting, loading: smsLoading, getSmsCode } = useSmsCode()
+
 const model = reactive({
-  email: '',
+  phone: '',
   code: '',
   pwd: '',
   confirmPwd: '',
@@ -26,7 +29,7 @@ const message = useMessage()
 const router = useRouter()
 // 发送验证码
 function handleSmsCode() {
-
+  getSmsCode(model.phone)
 }
 
 const submitLoading = ref(false)
@@ -72,40 +75,25 @@ const toLogin = async () => {
         TERRA MOURS
       </h2>
       <NForm ref="formRef" :model="model" size="medium" label-placement="left">
-        <NFormItem path="email">
-          <NInput v-model:value="model.email" placeholder="手机号">
-            <template #prefix>
-              <SvgIcon icon="ant-design:user-outlined" />
-            </template>
-          </NInput>
+        <NFormItem path="phone">
+          <NInput v-model:value="model.phone" placeholder="请输入手机号" />
         </NFormItem>
+
+        <NFormItem path="pwd">
+          <NInput v-model:value="model.pwd" type="password" show-password-on="click" placeholder="请输入密码" />
+        </NFormItem>
+
         <NFormItem path="code">
-          <NInput v-model:value="model.code" placeholder="验证码">
+          <NInput v-model:value="model.code" placeholder="请输入验证码">
             <template #prefix>
               <SvgIcon icon="ant-design:user-outlined" />
             </template>
           </NInput>
-          <NButton
-            size="large" type="primary"
-            @click="handleSmsCode"
-          >
-            {{ }}
+          <NButton size="large" :disabled="isCounting" type="primary" :loading="smsLoading" @click="handleSmsCode">
+            {{ label }}
           </NButton>
         </NFormItem>
-        <NFormItem path="pwd">
-          <NInput v-model:value="model.pwd" type="password" show-password-on="click" placeholder="请输入密码">
-            <template #prefix>
-              <SvgIcon icon="ant-design:unlock-outlined" />
-            </template>
-          </NInput>
-        </NFormItem>
-        <NFormItem path="confirmPwd">
-          <NInput v-model:value="model.confirmPwd" type="password" show-password-on="click" placeholder="确认密码">
-            <template #prefix>
-              <SvgIcon icon="ant-design:unlock-outlined" />
-            </template>
-          </NInput>
-        </NFormItem>
+
         <NSpace :vertical="true" :size="24">
           <NButton
             type="primary"

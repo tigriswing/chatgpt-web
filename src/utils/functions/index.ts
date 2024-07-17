@@ -1,3 +1,5 @@
+import useSmsCode from './use-sms-code'
+
 export function getCurrentDate() {
   const date = new Date()
   const day = date.getDate()
@@ -5,3 +7,5 @@ export function getCurrentDate() {
   const year = date.getFullYear()
   return `${year}-${month}-${day}`
 }
+
+export default useSmsCode
