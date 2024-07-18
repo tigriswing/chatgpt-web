@@ -60,4 +60,16 @@ declare namespace Chat {
 		reqId : string
 		currentLen : string
 	}
+
+	interface SendSms {
+		mobile : string
+		requestId : string
+	}
+
+	interface VerifySms {
+		mobile : string
+		requestId : string
+		smsCode : string
+		password : string
+	}
 }

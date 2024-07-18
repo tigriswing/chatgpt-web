@@ -1,9 +1,13 @@
 import { computed } from 'vue'
+import { useMessage } from 'naive-ui'
 import useLoading from './use-loading'
 import useCountDown from './use-count-down'
+import { sendSms } from '@/utils/request'
+
 export default function useSmsCode() {
   const { loading, startLoading, endLoading } = useLoading()
-  const { counts, start, isCounting } = useCountDown(60)
+  const { counts, startCount, isCounting } = useCountDown(60)
+  const message = useMessage()
 
   const initLabel = '发送'
   const countingLabel = (second: number) => `${second}`
@@ -65,23 +69,25 @@ export default function useSmsCode() {
   //   endLoading()
   // }
 
-  async function getSmsCode(phone: string) {
+  async function getSmsCode(phone: string, deviceId: string) {
     const valid = isPhoneValid(phone)
     if (!valid || loading.value)
       return
 
     startLoading()
-    // const { data } = await fetchEmailCode(email)
-    if (12) {
-      window.$message?.success('验证码发送成功！')
-      start()
+    const { data } = await sendSms(phone, deviceId)
+    if (data.code === 200) {
+      startCount()
+      message.success(data.data)
     }
+    else { message.warning('发送失败!') }
+
     endLoading()
   }
 
   return {
     label,
-    start,
+    startCount,
     isCounting,
     loading,
     getSmsCode,

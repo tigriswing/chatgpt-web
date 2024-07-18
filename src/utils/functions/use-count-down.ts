@@ -20,7 +20,7 @@ export default function useCountDown(second: number) {
    * 开始计时
    * @param updateSecond - 更改初时传入的倒计时时间
    */
-  function start(updateSecond: number = second) {
+  function startCount(updateSecond: number = second) {
     if (!counts.value) {
       setFalse()
       counts.value = updateSecond
@@ -47,7 +47,7 @@ export default function useCountDown(second: number) {
   return {
     counts,
     isCounting,
-    start,
+    startCount,
     stop,
     isComplete,
   }

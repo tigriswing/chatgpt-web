@@ -4,8 +4,8 @@ import type { FormInst } from 'naive-ui'
 import { NButton, NForm, NFormItem, NInput, NSpace, useMessage } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import useSmsCode from '@/utils/functions'
-import { login } from '@/utils/request'
-import { useAuthStoreWithout } from '@/store/modules'
+import { verifySms } from '@/utils/request'
+import generateRandom from '@/utils/functions/RandomUtils'
 
 defineProps<Props>()
 
@@ -24,12 +24,15 @@ interface Props {
 
 const backgroundImageURL = '/login_bg.png'
 const formRef = ref<HTMLElement & FormInst>()
+let currentFlowId = ''
 
 const message = useMessage()
 const router = useRouter()
 // 发送验证码
 function handleSmsCode() {
-  getSmsCode(model.phone)
+  currentFlowId = generateRandom(16)
+
+  getSmsCode(model.phone, currentFlowId)
 }
 
 const submitLoading = ref(false)
@@ -40,21 +43,15 @@ async function handleSubmit() {
   await formRef.value?.validate()
   try {
     submitLoading.value = true
-    const authStore = useAuthStoreWithout()
-    const data = await login()
-    if (data.code === '0000') {
-      authStore.setToken(data.data.userId)
-      await router.push('/')
-    }
+    // const authStore = useAuthStoreWithout()
 
-    // const data = await fetchRegister(model.email, model.pwd, model.confirmPwd, model.code)
-    // if (data.code === 200) {
-    //  message.success(data.data)
-    //  await router.push('/login')
-    // }
-    // else {
-    //  message.warning('注册失败!')
-    // }
+    const data = await verifySms(model.phone, model.pwd, model.code, currentFlowId)
+    if (data.code === 200)
+      message.success(data.data)
+      // await router.push('/login')
+
+    else
+      message.warning('发送失败!')
   }
   catch (error: any) {
     message.warning(error.message ?? 'error')

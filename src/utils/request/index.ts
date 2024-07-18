@@ -232,4 +232,52 @@ export function chatFlow(reqId: string, currentLen: string, signal?: GenericAbor
   return postV2({ url: 'openai/flow', data: postData, headers, signal })
 }
 
+export function sendSms(mobile: string, requestId: string): Promise<any> {
+  const sendSmsData: Chat.SendSms = {
+    mobile,
+    requestId,
+  }
+
+  const postData = new RequestBean<Chat.SendSms>(
+    '1',
+    '58',
+    sendSmsData,
+    SECRET_KEY,
+    '1719474174721',
+    '',
+  )
+
+  const headers = {
+    'sn': SECRET_KEY, // 设置授权头部
+    'Content-Type': 'application/json', // 设置内容类型头部
+  }
+
+  return postV2({ url: 'sms/send', data: postData, headers })
+}
+
+export function verifySms(mobile: string, password: string, smsCode: string, requestId: string): Promise<any> {
+  const verifySmsData: Chat.VerifySms = {
+    mobile,
+    requestId,
+    smsCode,
+    password,
+  }
+
+  const postData = new RequestBean<Chat.VerifySms>(
+    '1',
+    '58',
+    verifySmsData,
+    SECRET_KEY,
+    '1719474174721',
+    '',
+  )
+
+  const headers = {
+    'sn': SECRET_KEY, // 设置授权头部
+    'Content-Type': 'application/json', // 设置内容类型头部
+  }
+
+  return postV2({ url: 'sms/verify', data: postData, headers })
+}
+
 export default post
