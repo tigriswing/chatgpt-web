@@ -3,6 +3,7 @@ import { useMessage } from 'naive-ui'
 import useLoading from './use-loading'
 import useCountDown from './use-count-down'
 import { sendSms } from '@/utils/request'
+import { t } from '@/locales'
 
 export default function useSmsCode() {
   const { loading, startLoading, endLoading } = useLoading()
@@ -75,14 +76,21 @@ export default function useSmsCode() {
       return
 
     startLoading()
-    const { data } = await sendSms(phone, deviceId)
-    if (data.code === 200) {
-      startCount()
-      message.success(data.data)
+    try {
+      const { data } = await sendSms(phone, deviceId)
+      if (data.requestId !== undefined) {
+        startCount()
+        message.success('验证码发送成功')
+      }
+      else { message.warning('验证码发送失败!') }
     }
-    else { message.warning('发送失败!') }
-
-    endLoading()
+    catch (error: any) {
+      const errorMessage = (error?.msg || error?.message) ?? t('common.wrong')
+      message.warning(errorMessage)
+    }
+    finally {
+      endLoading()
+    }
   }
 
   return {

@@ -6,6 +6,8 @@ import { useRouter } from 'vue-router'
 import useSmsCode from '@/utils/functions'
 import { verifySms } from '@/utils/request'
 import generateRandom from '@/utils/functions/RandomUtils'
+import { t } from '@/locales'
+import { useAuthStoreWithout } from '@/store/modules'
 
 defineProps<Props>()
 
@@ -43,18 +45,19 @@ async function handleSubmit() {
   await formRef.value?.validate()
   try {
     submitLoading.value = true
-    // const authStore = useAuthStoreWithout()
+    const authStore = useAuthStoreWithout()
 
-    const data = await verifySms(model.phone, model.pwd, model.code, currentFlowId)
-    if (data.code === 200)
-      message.success(data.data)
-      // await router.push('/login')
-
-    else
-      message.warning('发送失败!')
+    const { data } = await verifySms(model.phone, model.pwd, model.code, currentFlowId)
+    if (data !== undefined) {
+      authStore.setDeviceId(data.deviceId)
+      authStore.setUserId(data.userId)
+      await router.push('/')
+    }
+    else { message.warning('验证码校验错误') }
   }
   catch (error: any) {
-    message.warning(error.message ?? 'error')
+    const errorMessage = (error?.msg || error?.message) ?? t('common.wrong')
+    message.warning(errorMessage)
   }
   finally {
     submitLoading.value = false
