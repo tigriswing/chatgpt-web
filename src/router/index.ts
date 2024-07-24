@@ -4,6 +4,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupPageGuard } from './permission'
 import { ChatLayout } from '@/views/chat/layout'
 import registerComponent from '@/views/account/register.vue'
+import loginComponent from '@/views/account/login.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -24,6 +25,16 @@ const routes: RouteRecordRaw[] = [
     path: '/register',
     name: 'register',
     component: registerComponent,
+    beforeEnter(to, from, next) {
+      // 如何已经登陆，则直接跳转到首页；TODO
+      next()
+    },
+  },
+
+  {
+    path: '/login',
+    name: 'login',
+    component: loginComponent,
     beforeEnter(to, from, next) {
       // 如何已经登陆，则直接跳转到首页；TODO
       next()

@@ -282,4 +282,29 @@ export function verifySms(mobile: string, password: string, smsCode: string, req
   return postV2({ url: 'sms/verify', data: postData, headers })
 }
 
+export function loginByMobile(mobile: string, password: string): Promise<any> {
+  password = getMD5Str(password, '')
+
+  const verifySmsData: Chat.MobileLogin = {
+    mobile,
+    password,
+  }
+
+  const postData = new RequestBean<Chat.MobileLogin>(
+    '1',
+    '58',
+    verifySmsData,
+    SECRET_KEY,
+    '1719474174721',
+    '',
+  )
+
+  const headers = {
+    'sn': SECRET_KEY, // 设置授权头部
+    'Content-Type': 'application/json', // 设置内容类型头部
+  }
+
+  return postV2({ url: 'sms/login', data: postData, headers })
+}
+
 export default post

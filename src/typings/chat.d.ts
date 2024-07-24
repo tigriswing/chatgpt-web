@@ -72,4 +72,9 @@ declare namespace Chat {
 		smsCode : string
 		password : string
 	}
+
+	interface MobileLogin {
+		mobile : string
+		password : string
+	}
 }
