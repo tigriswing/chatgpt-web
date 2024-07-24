@@ -96,6 +96,7 @@ export default function useSmsCode() {
   return {
     label,
     startCount,
+    isPhoneValid,
     isCounting,
     loading,
     getSmsCode,

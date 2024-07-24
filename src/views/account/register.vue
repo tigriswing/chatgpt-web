@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import type { FormInst } from 'naive-ui'
-import { NButton, NForm, NFormItem, NInput, NSpace, useMessage } from 'naive-ui'
+import { NButton, NForm, NFormItem, NImage, NInput, NSpace, useMessage } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import useSmsCode from '@/utils/functions'
 import { verifySms } from '@/utils/request'
 import generateRandom from '@/utils/functions/RandomUtils'
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules'
+import chatosGPT from '@/assets/chatosGPT.png'
 
 defineProps<Props>()
 
-const { label, isCounting, loading: smsLoading, getSmsCode } = useSmsCode()
+const { label, isCounting, isPhoneValid, loading: smsLoading, getSmsCode } = useSmsCode()
 
 const model = reactive({
   phone: '',
@@ -42,6 +43,9 @@ const submitLoading = ref(false)
 async function handleSubmit() {
   if (submitLoading.value)
     return
+  if (!isPhoneValid(model.phone))
+    return
+
   await formRef.value?.validate()
   try {
     submitLoading.value = true
@@ -71,9 +75,13 @@ const toLogin = async () => {
 <template>
   <div class="h-full flex items-center justify-center bg-center bg-cover bg-no-repeat" :style="{ backgroundImage: `url(${backgroundImageURL})` }">
     <div class="w-full max-w-md p-4">
-      <h2 class="text-white text-center pb-4 text-2xl font-mono font-bold">
-        TERRA MOURS
-      </h2>
+      <div class="flex flex-col justify-center items-center">
+        <NImage :src="chatosGPT" class="mb-4" style="pointer-events: none;" />
+        <h2 class="text-black text-center pb-4 text-2xl font-mono font-bold">
+          创建您的帐户
+        </h2>
+      </div>
+
       <NForm ref="formRef" :model="model" size="medium" label-placement="left">
         <NFormItem path="phone">
           <NInput v-model:value="model.phone" placeholder="请输入手机号" class="h-12 flex items-center" />
@@ -107,7 +115,7 @@ const toLogin = async () => {
           <div class="flex-y-center justify-between">
             <div class="w-12px">
               <NButton class="flex-1" :block="true" @click="toLogin">
-                返回
+                已有账户，去登录
               </NButton>
             </div>
           </div>
