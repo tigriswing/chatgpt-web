@@ -51,7 +51,7 @@ export function chatContextUtils() {
     // 不使用上下文的情况，直接取最后一个放到system里？
     if (!isUseContext) {
       const chatMsg: Chat.ChatMessage = { role: '', content: '' }
-      chatMsg.role = 'system'
+      chatMsg.role = 'user'
       chatMsg.content = dataList[limitStartIndex].text
       systemArray.push(chatMsg)
 
@@ -69,7 +69,7 @@ export function chatContextUtils() {
       const chatMsg: Chat.ChatMessage = { role: '', content: '' }
 
       if (index === 0) {
-        chatMsg.role = 'system'
+        chatMsg.role = 'user'
         chatMsg.content = dataList[0].text
         systemArray.push(chatMsg)
         conversationTokens += lenTokens(chatMsg.content)

@@ -2,7 +2,7 @@ import type { AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axio
 import type { LoginReqData } from '../request/model/LoginReqData'
 import { RequestBean } from '../request/model/RequestBean'
 import request from './axios'
-import { getSignature } from './utils'
+import { getMD5Str, getSignature } from './utils'
 import { useAuthStore } from '@/store'
 
 // const testIp = 'http://enjoyailife.com/game-api/'
@@ -186,7 +186,7 @@ export function login(): Promise<any> {
 }
 
 export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal, modelType?: string): Promise<any> {
-  let requestUrl = 'openai/v2/flowchat'
+  let requestUrl = 'openai/v9/flowchat'
   if (modelType === '3') { // gpt-4 TODO
     chatData.mType = '14'
     requestUrl = 'wd/v2/flowchat'
@@ -256,6 +256,8 @@ export function sendSms(mobile: string, requestId: string): Promise<any> {
 }
 
 export function verifySms(mobile: string, password: string, smsCode: string, requestId: string): Promise<any> {
+  password = getMD5Str(password, '')
+
   const verifySmsData: Chat.VerifySms = {
     mobile,
     requestId,

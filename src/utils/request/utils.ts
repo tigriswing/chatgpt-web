@@ -14,7 +14,7 @@ function sort(map: { [key: string]: any }): string {
   return buffer.join('&').replace(/"/g, '')
 }
 
-function getMD5Str(str: string, key: string): string {
+export function getMD5Str(str: string, key: string): string {
   str = str + key
   try {
     const hash = CryptoJS.MD5(str)

@@ -69,27 +69,27 @@ const toLogin = async () => {
 </script>
 
 <template>
-  <div class="h-full relative bg-center bg-cover bg-no-repeat" :style="{ backgroundImage: `url(${backgroundImageURL})` }">
-    <div class="absolute w-1/4 p-4 right-40 bottom-1/2 translate-y-1/2">
+  <div class="h-full flex items-center justify-center bg-center bg-cover bg-no-repeat" :style="{ backgroundImage: `url(${backgroundImageURL})` }">
+    <div class="w-full max-w-md p-4">
       <h2 class="text-white text-center pb-4 text-2xl font-mono font-bold">
         TERRA MOURS
       </h2>
       <NForm ref="formRef" :model="model" size="medium" label-placement="left">
         <NFormItem path="phone">
-          <NInput v-model:value="model.phone" placeholder="请输入手机号" />
+          <NInput v-model:value="model.phone" placeholder="请输入手机号" class="h-12 flex items-center" />
         </NFormItem>
 
         <NFormItem path="pwd">
-          <NInput v-model:value="model.pwd" type="password" show-password-on="click" placeholder="请输入密码" />
+          <NInput v-model:value="model.pwd" type="password" class="h-12 flex items-center" show-password-on="click" placeholder="请输入密码" />
         </NFormItem>
 
-        <NFormItem path="code">
-          <NInput v-model:value="model.code" placeholder="请输入验证码">
+        <NFormItem path="code" class="flex items-center">
+          <NInput v-model:value="model.code" placeholder="请输入验证码" class="mr-2 h-12 flex items-center">
             <template #prefix>
               <SvgIcon icon="ant-design:user-outlined" />
             </template>
           </NInput>
-          <NButton size="large" :disabled="isCounting" type="primary" :loading="smsLoading" @click="handleSmsCode">
+          <NButton size="large" :disabled="isCounting" type="primary" :loading="smsLoading" class="ml-2 h-12" @click="handleSmsCode">
             {{ label }}
           </NButton>
         </NFormItem>
