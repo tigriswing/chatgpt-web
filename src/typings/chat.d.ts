@@ -64,6 +64,7 @@ declare namespace Chat {
 	interface SendSms {
 		mobile : string
 		requestId : string
+		actionType : string
 	}
 
 	interface VerifySms {
@@ -71,6 +72,7 @@ declare namespace Chat {
 		requestId : string
 		smsCode : string
 		password : string
+		actionType : string
 	}
 
 	interface MobileLogin {

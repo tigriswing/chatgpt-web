@@ -35,7 +35,7 @@ const router = useRouter()
 function handleSmsCode() {
   currentFlowId = generateRandom(16)
 
-  getSmsCode(model.phone, currentFlowId, '1')
+  getSmsCode(model.phone, currentFlowId, '2')
 }
 
 const submitLoading = ref(false)
@@ -63,7 +63,7 @@ async function handleSubmit() {
     submitLoading.value = true
     const authStore = useAuthStoreWithout()
 
-    const { data } = await verifySms(model.phone, model.pwd, model.code, currentFlowId, '1')
+    const { data } = await verifySms(model.phone, model.pwd, model.code, currentFlowId, '2')
     if (data !== undefined) {
       authStore.setDeviceId(data.deviceId)
       authStore.setUserId(data.userId)
@@ -79,9 +79,6 @@ async function handleSubmit() {
     submitLoading.value = false
   }
 }
-const toLogin = async () => {
-  await router.push('/login')
-}
 </script>
 
 <template>
@@ -90,7 +87,7 @@ const toLogin = async () => {
       <div class="flex flex-col justify-center items-center">
         <NImage :src="chatosGPT" class="mb-4" style="pointer-events: none;" />
         <h2 class="text-black text-center pb-4 text-2xl font-mono font-bold">
-          创建您的帐户
+          重置密码
         </h2>
       </div>
 
@@ -100,7 +97,7 @@ const toLogin = async () => {
         </NFormItem>
 
         <NFormItem path="pwd">
-          <NInput v-model:value="model.pwd" type="password" class="h-12 flex items-center" show-password-on="click" placeholder="请输入密码" />
+          <NInput v-model:value="model.pwd" type="password" class="h-12 flex items-center" show-password-on="click" placeholder="请输入新密码" />
         </NFormItem>
 
         <NFormItem path="code" class="flex items-center">
@@ -124,13 +121,6 @@ const toLogin = async () => {
           >
             确定
           </NButton>
-          <div class="flex-y-center justify-between">
-            <div class="w-12px">
-              <NButton class="flex-1" :block="true" @click="toLogin">
-                已有账户，去登录
-              </NButton>
-            </div>
-          </div>
         </NSpace>
       </NForm>
     </div>

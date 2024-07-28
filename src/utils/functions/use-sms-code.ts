@@ -70,14 +70,14 @@ export default function useSmsCode() {
   //   endLoading()
   // }
 
-  async function getSmsCode(phone: string, deviceId: string) {
+  async function getSmsCode(phone: string, deviceId: string, actionType: string) {
     const valid = isPhoneValid(phone)
     if (!valid || loading.value)
       return
 
     startLoading()
     try {
-      const { data } = await sendSms(phone, deviceId)
+      const { data } = await sendSms(phone, deviceId, actionType)
       if (data.requestId !== undefined) {
         startCount()
         message.success('验证码发送成功')

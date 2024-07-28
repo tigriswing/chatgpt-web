@@ -6,7 +6,7 @@ import { getMD5Str, getSignature } from './utils'
 import { useAuthStore } from '@/store'
 
 // const testIp = 'http://enjoyailife.com/game-api/'
-const testIp = 'http://192.168.43.160:8088/'
+const testIp = 'http://192.168.0.7:8088/'
 
 const UserId = '2311087K0KMRFYY8' // test
 // const UserId = '2310091P8BN55DS8'
@@ -232,10 +232,11 @@ export function chatFlow(reqId: string, currentLen: string, signal?: GenericAbor
   return postV2({ url: 'openai/flow', data: postData, headers, signal })
 }
 
-export function sendSms(mobile: string, requestId: string): Promise<any> {
+export function sendSms(mobile: string, requestId: string, actionType: string): Promise<any> {
   const sendSmsData: Chat.SendSms = {
     mobile,
     requestId,
+    actionType,
   }
 
   const postData = new RequestBean<Chat.SendSms>(
@@ -255,7 +256,8 @@ export function sendSms(mobile: string, requestId: string): Promise<any> {
   return postV2({ url: 'sms/send', data: postData, headers })
 }
 
-export function verifySms(mobile: string, password: string, smsCode: string, requestId: string): Promise<any> {
+export function verifySms(mobile: string, password: string, smsCode: string,
+  requestId: string, actionType: string): Promise<any> {
   password = getMD5Str(password, '')
 
   const verifySmsData: Chat.VerifySms = {
@@ -263,6 +265,7 @@ export function verifySms(mobile: string, password: string, smsCode: string, req
     requestId,
     smsCode,
     password,
+    actionType,
   }
 
   const postData = new RequestBean<Chat.VerifySms>(
