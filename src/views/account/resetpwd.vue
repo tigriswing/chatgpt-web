@@ -8,7 +8,6 @@ import { verifySms } from '@/utils/request'
 import generateRandom from '@/utils/functions/RandomUtils'
 import { validatePassword, validateSmsCode } from '@/utils/functions/formatUtils'
 import { t } from '@/locales'
-import { useAuthStoreWithout } from '@/store/modules'
 import chatosGPT from '@/assets/chatosGPT.png'
 
 defineProps<Props>()
@@ -61,15 +60,12 @@ async function handleSubmit() {
   await formRef.value?.validate()
   try {
     submitLoading.value = true
-    const authStore = useAuthStoreWithout()
 
     const { data } = await verifySms(model.phone, model.pwd, model.code, currentFlowId, '2')
-    if (data !== undefined) {
-      authStore.setDeviceId(data.deviceId)
-      authStore.setUserId(data.userId)
-      await router.push('/')
-    }
-    else { message.warning('验证码校验错误') }
+    if (data !== undefined)
+      await router.push('/login')
+
+    else message.warning('验证码校验错误')
   }
   catch (error: any) {
     const errorMessage = (error?.msg || error?.message) ?? t('common.wrong')
@@ -85,7 +81,7 @@ async function handleSubmit() {
   <div class="h-full flex items-center justify-center bg-center bg-cover bg-no-repeat" :style="{ backgroundImage: `url(${backgroundImageURL})` }">
     <div class="w-full max-w-md p-4">
       <div class="flex flex-col justify-center items-center">
-        <NImage :src="chatosGPT" class="mb-4" style="pointer-events: none;" />
+        <NImage :src="chatosGPT" class="mb-4" style="width: 80px; height:80px; pointer-events: none;" />
         <h2 class="text-black text-center pb-4 text-2xl font-mono font-bold">
           重置密码
         </h2>

@@ -60,6 +60,10 @@ async function handleSubmit() {
     submitLoading.value = false
   }
 }
+
+const handleResetPwd = async () => {
+  await router.push('/resetpwd')
+}
 const toRegister = async () => {
   await router.push('/register')
 }
@@ -69,7 +73,7 @@ const toRegister = async () => {
   <div class="h-full flex items-center justify-center bg-center bg-cover bg-no-repeat" :style="{ backgroundImage: `url(${backgroundImageURL})` }">
     <div class="w-full max-w-md p-4">
       <div class="flex flex-col justify-center items-center">
-        <NImage :src="chatosGPT" class="mb-4" style="pointer-events: none;" />
+        <NImage :src="chatosGPT" class="mb-4" style="width: 80px; height:80px; pointer-events: none;" />
         <h2 class="text-black text-center pb-4 text-2xl font-mono font-bold">
           请登录
         </h2>
@@ -80,29 +84,35 @@ const toRegister = async () => {
           <NInput v-model:value="model.phone" placeholder="请输入手机号" class="h-12 flex items-center" />
         </NFormItem>
 
-        <NFormItem path="pwd">
-          <NInput v-model:value="model.pwd" type="password" class="h-12 flex items-center" show-password-on="click" placeholder="请输入密码" />
+        <NFormItem
+          path="pwd" style="--n-feedback-height: 0;"
+        >
+          <NInput v-model:value="model.pwd" type="password" class="flex items-center" show-password-on="click" placeholder="请输入密码" />
         </NFormItem>
 
-        <NSpace :vertical="true" :size="24">
-          <NButton
-            type="primary"
-            size="large"
-            :block="true"
-            :loading="submitLoading"
-            @click="handleSubmit"
-          >
-            确定
-          </NButton>
-          <div class="flex-y-center justify-between">
-            <div class="w-12px">
-              <NButton class="flex-1" :block="true" @click="toRegister">
-                没有账户，去注册
-              </NButton>
-            </div>
-          </div>
-        </NSpace>
+        <div class="text-blue-500 mb-4 mt-2 text-sm cursor-pointer hover:cursor-pointer" @click="handleResetPwd">
+          忘记密码
+        </div>
       </NForm>
+
+      <NSpace :vertical="true" :size="24">
+        <NButton
+          type="primary"
+          size="large"
+          :block="true"
+          :loading="submitLoading"
+          @click="handleSubmit"
+        >
+          确定
+        </NButton>
+        <div class="flex-y-center justify-between">
+          <div class="w-12px">
+            <NButton class="flex-1" :block="true" @click="toRegister">
+              没有账户，去注册
+            </NButton>
+          </div>
+        </div>
+      </NSpace>
     </div>
   </div>
 </template>

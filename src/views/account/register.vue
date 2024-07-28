@@ -88,7 +88,7 @@ const toLogin = async () => {
   <div class="h-full flex items-center justify-center bg-center bg-cover bg-no-repeat" :style="{ backgroundImage: `url(${backgroundImageURL})` }">
     <div class="w-full max-w-md p-4">
       <div class="flex flex-col justify-center items-center">
-        <NImage :src="chatosGPT" class="mb-4" style="pointer-events: none;" />
+        <NImage :src="chatosGPT" class="mb-4" style="width: 80px; height:80px; pointer-events: none;" />
         <h2 class="text-black text-center pb-4 text-2xl font-mono font-bold">
           创建您的帐户
         </h2>

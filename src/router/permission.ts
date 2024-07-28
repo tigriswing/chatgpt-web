@@ -6,10 +6,10 @@ export function setupPageGuard(router: Router) {
     try {
       const authStore = useAuthStoreWithout()
       if (authStore.userId === undefined) {
-        if (to.path === '/login' || to.path === '/register ' || to.path === '/resetpwd')
+        if (to.path === '/login' || to.path === '/register' || to.path === '/resetpwd')
           next()
         else
-          next({ name: 'resetpwd' })
+          next({ name: 'login' })
       }
 
       else { next() }
