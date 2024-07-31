@@ -60,6 +60,12 @@ export const useAuthStore = defineStore('auth-store', {
       this.token = undefined
       removeToken()
     },
+
+    logout() {
+      this.userId = undefined
+      setUserId(this.userId)
+      this.removeToken()
+    },
   },
 })
 

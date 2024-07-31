@@ -20,7 +20,7 @@ export function getUserId() {
   return ss.get(USER_ID)
 }
 
-export function setUserId(userId: string) {
+export function setUserId(userId: string | undefined) {
   return ss.set(USER_ID, userId)
 }
 

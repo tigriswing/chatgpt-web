@@ -6,7 +6,7 @@ import { getMD5Str, getSignature } from './utils'
 import { useAuthStore } from '@/store'
 
 // const testIp = 'http://enjoyailife.com/game-api/'
-const testIp = 'http://192.168.0.7:8088/'
+const testIp = 'http://192.168.43.160:8088/'
 
 const UserId = '2311087K0KMRFYY8' // test
 // const UserId = '2310091P8BN55DS8'
