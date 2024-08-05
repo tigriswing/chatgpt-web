@@ -28,15 +28,15 @@ export const useUserStore = defineStore('user-store', {
       return [{
         label: 'DeepSeek',
         key: '1',
-        description: 'This is model DeepSeek',
+        description: '国内最强大的模型',
       }, {
-        label: 'ChatGPT 3.5',
+        label: 'GPT-4o mini',
         key: '2',
-        description: 'This is model ChatGPT 3.5',
+        description: '轻巧但功能强大的模型',
       }, {
         label: 'ChatGPT 4.0',
         key: '3',
-        description: 'This is model ChatGPT 4.0',
+        description: '我们最强大模型，适合解决复杂的难题',
       }, {
         label: 'ChatGPT 4.0 Web',
         key: '4',
