@@ -5,11 +5,11 @@ import request from './axios'
 import { getMD5Str, getSignature } from './utils'
 import { useAuthStore } from '@/store'
 
-// const testIp = 'http://enjoyailife.com/game-api/'
-const testIp = 'http://192.168.43.160:8088/'
+const testIp = 'http://enjoyailife.com/game-api/'
+// const testIp = 'http://192.168.43.160:8088/'
 
-const UserId = '2311087K0KMRFYY8' // test
-// const UserId = '2310091P8BN55DS8'
+// const UserId = '2311087K0KMRFYY8' // test
+const UserId = '2310091P8BN55DS8'
 const SECRET_KEY = 'ff9f52f2-edaf-3ac5-bdf0-cd3468d79278'
 
 export interface HttpOption {
@@ -186,10 +186,21 @@ export function login(): Promise<any> {
 }
 
 export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal, modelType?: string): Promise<any> {
-  let requestUrl = 'openai/v9/flowchat'
-  if (modelType === '3') { // gpt-4 TODO
-    chatData.mType = '14'
-    requestUrl = 'wd/v2/flowchat'
+  const requestUrl = 'openai/flowchat'
+  if (modelType === '1') { // deepseek
+    chatData.modelType = '201'
+  }
+  else if (modelType === '2') { // 4o mini
+    chatData.modelType = '101'
+  }
+  else if (modelType === '3') { // gpt-4 TODO
+    chatData.modelType = '102'
+  }
+  else if (modelType === '4') { // gpt-4 TODO
+    chatData.modelType = '104'
+  }
+  else {
+    chatData.modelType = '201'
   }
 
   const postData = new RequestBean<Chat.ChatAskBean>(

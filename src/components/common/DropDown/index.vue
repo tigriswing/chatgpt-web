@@ -12,13 +12,6 @@ onMounted(() => {
   selectedLabel.value = userStore.chatModel.label
 })
 
-function handleClick(key: string) {
-  const selectedOption = options.value.find(option => option.key === key)
-  if (selectedOption) {
-    userStore.setUserChatModel(selectedOption)
-    selectedLabel.value = selectedOption.label
-  }
-}
 const dropdown = ref<HTMLElement | null>(null)
 const isShowDropdown = ref(false)
 const hoveredIndex = ref(0)
@@ -32,6 +25,15 @@ const hoverItem = (index: number) => {
 
 const leaveItem = () => {
   hoveredIndex.value = 0
+}
+
+function handleClick(key: string) {
+  const selectedOption = options.value.find(option => option.key === key)
+  if (selectedOption) {
+    userStore.setUserChatModel(selectedOption)
+    selectedLabel.value = selectedOption.label
+  }
+  toggleDropdown()
 }
 </script>
 
