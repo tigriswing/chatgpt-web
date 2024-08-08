@@ -1,5 +1,5 @@
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios'
-import { post } from '@/utils/request'
+// import { post } from '@/utils/request'
 import { useAuthStore, useSettingStore } from '@/store'
 
 export function fetchChatAPI<T = any>(
@@ -7,17 +7,17 @@ export function fetchChatAPI<T = any>(
   options?: { conversationId?: string; parentMessageId?: string },
   signal?: GenericAbortSignal,
 ) {
-  return post<T>({
-    url: '/chat',
-    data: { prompt, options },
-    signal,
-  })
+  // return post<T>({
+  //   url: '/chat',
+  //   data: { prompt, options },
+  //   signal,
+  // })
 }
 
 export function fetchChatConfig<T = any>() {
-  return post<T>({
-    url: '/config',
-  })
+  // return post<T>({
+  //   url: '/config',
+  // })
 }
 
 export function fetchChatAPIProcess<T = any>(
@@ -44,23 +44,23 @@ export function fetchChatAPIProcess<T = any>(
     }
   }
 
-  return post<T>({
-    url: '/chat-process',
-    data,
-    signal: params.signal,
-    onDownloadProgress: params.onDownloadProgress,
-  })
+  // return post<T>({
+  //   url: '/chat-process',
+  //   data,
+  //   signal: params.signal,
+  //   onDownloadProgress: params.onDownloadProgress,
+  // })
 }
 
 export function fetchSession<T>() {
-  return post<T>({
-    url: '/session',
-  })
+  // return post<T>({
+  //   url: '/session',
+  // })
 }
 
 export function fetchVerify<T>(token: string) {
-  return post<T>({
-    url: '/verify',
-    data: { token },
-  })
+  // return post<T>({
+  //   url: '/verify',
+  //   data: { token },
+  // })
 }
