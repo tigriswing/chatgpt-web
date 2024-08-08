@@ -118,31 +118,14 @@ export function postV2<T = any>(
 }
 
 export function login(): Promise<any> {
-  const deviceId = getDeviceId()
   const loginReqData: LoginReqData = {
     userName: 'A930PAX',
   }
 
-  const postData = new RequestBean<LoginReqData>(
-    '1',
-    '58',
-    loginReqData,
-    '',
-    '1719133012191',
-    '',
-  )
-
-  const headers = {
-    'sn': deviceId, // 设置授权头部
-    'Content-Type': 'application/json', // 设置内容类型头部
-  }
-
-  // 发送POST请求
-  return postV2({ url: 'account/login', data: postData, headers })
+  return commCallHttp(loginReqData, 'account/login')
 }
 
 export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal, modelType?: string): Promise<any> {
-  const requestUrl = 'openai/flowchat'
   if (modelType === '1') { // deepseek
     chatData.modelType = '201'
   }
@@ -159,22 +142,7 @@ export function chat(chatData: Chat.ChatAskBean, signal?: GenericAbortSignal, mo
     chatData.modelType = '201'
   }
 
-  const deviceId = getDeviceId()
-  const postData = new RequestBean<Chat.ChatAskBean>(
-    '1',
-    '58',
-    chatData,
-    deviceId,
-    '1719474174721',
-    getUserId(),
-  )
-
-  const headers = {
-    'sn': deviceId, // 设置授权头部
-    'Content-Type': 'application/json', // 设置内容类型头部
-  }
-
-  return postV2({ url: requestUrl, data: postData, headers, signal })
+  return commCallHttp(chatData, 'openai/flowchat', signal)
 }
 
 export function chatFlow(reqId: string, currentLen: string, signal?: GenericAbortSignal): Promise<any> {
@@ -183,22 +151,7 @@ export function chatFlow(reqId: string, currentLen: string, signal?: GenericAbor
     currentLen,
   }
 
-  const deviceId = getDeviceId()
-  const postData = new RequestBean<Chat.ChatFlowRequest>(
-    '1',
-    '58',
-    chatData,
-    deviceId,
-    '1719474174721',
-    getUserId(),
-  )
-
-  const headers = {
-    'sn': deviceId, // 设置授权头部
-    'Content-Type': 'application/json', // 设置内容类型头部
-  }
-
-  return postV2({ url: 'openai/flow', data: postData, headers, signal })
+  return commCallHttp(chatData, 'openai/flow', signal)
 }
 
 export function sendSms(mobile: string, requestId: string, actionType: string): Promise<any> {
@@ -208,21 +161,7 @@ export function sendSms(mobile: string, requestId: string, actionType: string): 
     actionType,
   }
 
-  const postData = new RequestBean<Chat.SendSms>(
-    '1',
-    '58',
-    sendSmsData,
-    '',
-    '1719474174721',
-    '',
-  )
-
-  const headers = {
-    'sn': getDeviceId(), // 设置授权头部
-    'Content-Type': 'application/json', // 设置内容类型头部
-  }
-
-  return postV2({ url: 'sms/send', data: postData, headers })
+  return commCallHttp(sendSmsData, 'sms/send')
 }
 
 export function verifySms(mobile: string, password: string, smsCode: string,
@@ -237,22 +176,7 @@ export function verifySms(mobile: string, password: string, smsCode: string,
     actionType,
   }
 
-  const deviceId = getDeviceId()
-  const postData = new RequestBean<Chat.VerifySms>(
-    '1',
-    '58',
-    verifySmsData,
-    deviceId,
-    '1719474174721',
-    '',
-  )
-
-  const headers = {
-    'sn': deviceId, // 设置授权头部
-    'Content-Type': 'application/json', // 设置内容类型头部
-  }
-
-  return postV2({ url: 'sms/verify', data: postData, headers })
+  return commCallHttp(verifySmsData, 'sms/verify')
 }
 
 export function loginByMobile(mobile: string, password: string): Promise<any> {
@@ -263,14 +187,19 @@ export function loginByMobile(mobile: string, password: string): Promise<any> {
     password,
   }
 
+  return commCallHttp(verifySmsData, 'sms/login')
+}
+
+export function commCallHttp<T>(data: T, url: string, signal?: GenericAbortSignal): Promise<any> {
   const deviceId = getDeviceId()
-  const postData = new RequestBean<Chat.MobileLogin>(
-    '1',
+
+  const postData = new RequestBean<T>(
+    '2',
     '58',
-    verifySmsData,
+    data,
     deviceId,
-    '1719474174721',
-    '',
+    `${Date.now()}`,
+    getUserId(),
   )
 
   const headers = {
@@ -278,5 +207,5 @@ export function loginByMobile(mobile: string, password: string): Promise<any> {
     'Content-Type': 'application/json', // 设置内容类型头部
   }
 
-  return postV2({ url: 'sms/login', data: postData, headers })
+  return postV2({ url, data: postData, headers, signal })
 }
