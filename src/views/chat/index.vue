@@ -14,9 +14,8 @@ import HeaderComponent from './components/Header/index.vue'
 import { DropDown, HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore, useUserStore } from '@/store'
-import { fetchChatAPIProcess } from '@/api'
+import { chat, chatFlow, fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
-import { chat, chatFlow } from '@/utils/request'
 
 const userStore = useUserStore()
 

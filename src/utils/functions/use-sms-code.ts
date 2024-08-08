@@ -2,7 +2,7 @@ import { computed } from 'vue'
 import { useMessage } from 'naive-ui'
 import useLoading from './use-loading'
 import useCountDown from './use-count-down'
-import { sendSms } from '@/utils/request'
+import { sendSms } from '@/api'
 import { t } from '@/locales'
 
 export default function useSmsCode() {
