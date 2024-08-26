@@ -6,7 +6,8 @@ import { ChatLayout } from '@/views/chat/layout'
 import registerComponent from '@/views/account/register.vue'
 import loginComponent from '@/views/account/login.vue'
 import resetpwdComponent from '@/views/account/resetpwd.vue'
-import widgetsPageComponent from '@/views/widgets/index.vue'
+// import widgetsPageComponent from '@/views/widgets/index.vue'
+import interViewPageComponent from '@/views/interview/index.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -53,10 +54,16 @@ const routes: RouteRecordRaw[] = [
     },
   },
 
+  // {
+  //   path: '/widgets',
+  //   name: 'widgets',
+  //   component: widgetsPageComponent,
+  // },
+
   {
-    path: '/widgets',
-    name: 'widgets',
-    component: widgetsPageComponent,
+    path: '/talk',
+    name: 'talk',
+    component: interViewPageComponent,
   },
 
   {

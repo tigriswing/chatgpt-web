@@ -14,7 +14,7 @@ import HeaderComponent from './components/Header/index.vue'
 import { DropDown, HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore, useUserStore } from '@/store'
-import { chat, chatFlow, fetchChatAPIProcess } from '@/api'
+import { chat, chatFlow } from '@/api'
 import { t } from '@/locales'
 
 const userStore = useUserStore()
@@ -347,117 +347,6 @@ async function onRegenerateV2(index: number) {
   }
 
   fetchChatAPIOnce()
-}
-
-async function onRegenerate(index: number) {
-  if (loading.value)
-    return
-
-  controller = new AbortController()
-
-  const { requestOptions } = dataSources.value[index]
-
-  let message = requestOptions?.prompt ?? ''
-
-  let options: Chat.ConversationRequest = {}
-
-  if (requestOptions.options)
-    options = { ...requestOptions.options }
-
-  loading.value = true
-
-  updateChat(
-    +uuid,
-    index,
-    {
-      dateTime: new Date().toLocaleString(),
-      text: '',
-      inversion: false,
-      error: false,
-      loading: true,
-      conversationOptions: null,
-      requestOptions: { prompt: message, options: { ...options } },
-    },
-  )
-
-  try {
-    let lastText = ''
-    const fetchChatAPIOnce = async () => {
-      await fetchChatAPIProcess<Chat.ConversationResponse>({
-        prompt: message,
-        options,
-        signal: controller.signal,
-        onDownloadProgress: ({ event }) => {
-          const xhr = event.target
-          const { responseText } = xhr
-          // Always process the final line
-          const lastIndex = responseText.lastIndexOf('\n', responseText.length - 2)
-          let chunk = responseText
-          if (lastIndex !== -1)
-            chunk = responseText.substring(lastIndex)
-          try {
-            const data = JSON.parse(chunk)
-            updateChat(
-              +uuid,
-              index,
-              {
-                dateTime: new Date().toLocaleString(),
-                text: lastText + (data.text ?? ''),
-                inversion: false,
-                error: false,
-                loading: true,
-                conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
-                requestOptions: { prompt: message, options: { ...options } },
-              },
-            )
-
-            if (openLongReply && data.detail.choices[0].finish_reason === 'length') {
-              options.parentMessageId = data.id
-              lastText = data.text
-              message = ''
-              return fetchChatAPIOnce()
-            }
-          }
-          catch (error) {
-            //
-          }
-        },
-      })
-      updateChatSome(+uuid, index, { loading: false })
-    }
-    await fetchChatAPIOnce()
-  }
-  catch (error: any) {
-    if (error.message === 'canceled') {
-      updateChatSome(
-        +uuid,
-        index,
-        {
-          loading: false,
-        },
-      )
-      return
-    }
-
-    const errorMessage = error?.message ?? t('common.wrong')
-
-    updateChat(
-      +uuid,
-      index,
-      {
-        dateTime: new Date().toLocaleString(),
-        text: errorMessage,
-        inversion: false,
-        error: true,
-        loading: false,
-        conversationOptions: null,
-        requestOptions: { prompt: message, options: { ...options } },
-      },
-    )
-  }
-  finally {
-    loading.value = false
-  }
 }
 
 function handleExport() {

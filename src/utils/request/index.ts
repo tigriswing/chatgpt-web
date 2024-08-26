@@ -5,8 +5,8 @@ import request from './axios'
 import { getSignature } from './utils'
 import { useAuthStore } from '@/store'
 
-// const testIp = 'http://enjoyailife.com/game-api/'
-const testIp = 'http://192.168.43.160:8088/'
+const testIp = 'https://enjoyailife.com/game-api/'
+// const testIp = 'http://192.168.0.9:8088/'
 
 export interface HttpOption {
   url: string
