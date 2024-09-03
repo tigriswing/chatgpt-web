@@ -8,6 +8,7 @@ import loginComponent from '@/views/account/login.vue'
 import resetpwdComponent from '@/views/account/resetpwd.vue'
 // import widgetsPageComponent from '@/views/widgets/index.vue'
 import interViewPageComponent from '@/views/interview/index.vue'
+import userProtocol from '@/views/account/userprotocol.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -64,6 +65,12 @@ const routes: RouteRecordRaw[] = [
     path: '/talk',
     name: 'talk',
     component: interViewPageComponent,
+  },
+
+  {
+    path: '/protocol',
+    name: 'protocol',
+    component: userProtocol,
   },
 
   {

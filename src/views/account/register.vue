@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import type { FormInst } from 'naive-ui'
-import { NButton, NForm, NFormItem, NImage, NInput, NSpace, useMessage } from 'naive-ui'
+import { NButton, NCheckbox, NForm, NFormItem, NInput, NSpace, useMessage } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import useSmsCode from '@/utils/functions'
 import { verifySms } from '@/api'
@@ -9,7 +9,6 @@ import generateRandom from '@/utils/functions/RandomUtils'
 import { validatePassword, validateSmsCode } from '@/utils/functions/formatUtils'
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules'
-import chatosGPT from '@/assets/chatosGPT.png'
 
 defineProps<Props>()
 
@@ -20,6 +19,11 @@ const model = reactive({
   code: '',
   pwd: '',
 })
+
+const protocol = ref({
+  agreed: false,
+})
+const serviceAgreementLink = 'https://www.baidu.com'
 
 interface Props {
   visible: boolean
@@ -45,6 +49,10 @@ async function handleSubmit() {
     return
   if (!isPhoneValid(model.phone))
     return
+  if (protocol.value.agreed === false) {
+    message.warning('请阅读并同意用户协议')
+    return
+  }
   if (currentFlowId.length === 0) {
     message.warning('请先发送验证码!')
     return
@@ -88,7 +96,6 @@ const toLogin = async () => {
   <div class="h-full flex items-center justify-center bg-center bg-cover bg-no-repeat" :style="{ backgroundImage: `url(${backgroundImageURL})` }">
     <div class="w-full max-w-md p-4">
       <div class="flex flex-col justify-center items-center">
-        <NImage :src="chatosGPT" class="mb-4" style="width: 80px; height:80px; pointer-events: none;" />
         <h2 class="text-black text-center pb-4 text-2xl font-mono font-bold">
           创建您的帐户
         </h2>
@@ -130,6 +137,14 @@ const toLogin = async () => {
                 已有账户，去登录
               </NButton>
             </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <NCheckbox v-model:checked="protocol.agreed">
+              我已阅读并同意
+              <router-link to="/protocol" class="text-blue-500">
+                《用户协议》
+              </router-link>
+            </NCheckbox>
           </div>
         </NSpace>
       </NForm>
