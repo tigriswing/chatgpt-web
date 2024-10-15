@@ -23,7 +23,6 @@ const model = reactive({
 const protocol = ref({
   agreed: false,
 })
-const serviceAgreementLink = 'https://www.baidu.com'
 
 interface Props {
   visible: boolean

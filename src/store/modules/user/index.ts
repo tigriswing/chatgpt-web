@@ -30,15 +30,15 @@ export const useUserStore = defineStore('user-store', {
         key: '1',
         description: '国内最强大的模型',
       }, {
-        label: 'GPT-4o mini',
+        label: '灵动AI',
         key: '2',
         description: '轻巧但功能强大的模型',
       }, {
-        label: 'ChatGPT 4.0',
+        label: '智能AI',
         key: '3',
         description: '我们最强大模型，适合解决复杂的难题',
       }, {
-        label: 'ChatGPT 4.0 Web',
+        label: '智能AI Web',
         key: '4',
         description: '带搜索功能',
       }]

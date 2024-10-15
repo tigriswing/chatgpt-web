@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import type { FormInst } from 'naive-ui'
-import { NButton, NForm, NFormItem, NImage, NInput, NSpace, useMessage } from 'naive-ui'
+import { NButton, NForm, NFormItem, NInput, NSpace, useMessage } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import useSmsCode from '@/utils/functions'
 import { verifySms } from '@/api'
 import generateRandom from '@/utils/functions/RandomUtils'
 import { validatePassword, validateSmsCode } from '@/utils/functions/formatUtils'
 import { t } from '@/locales'
-import chatosGPT from '@/assets/chatosGPT.png'
 
 defineProps<Props>()
 
@@ -81,7 +80,6 @@ async function handleSubmit() {
   <div class="h-full flex items-center justify-center bg-center bg-cover bg-no-repeat" :style="{ backgroundImage: `url(${backgroundImageURL})` }">
     <div class="w-full max-w-md p-4">
       <div class="flex flex-col justify-center items-center">
-        <NImage :src="chatosGPT" class="mb-4" style="width: 80px; height:80px; pointer-events: none;" />
         <h2 class="text-black text-center pb-4 text-2xl font-mono font-bold">
           重置密码
         </h2>
